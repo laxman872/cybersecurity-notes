@@ -10,7 +10,7 @@ A black-box/gray-box security assessment conducted against the **OWASP Juice Sho
 ---
 
 ## 🎯 Executive Summary
-The objective of this assessment was to evaluate authentication resilience, access control boundaries, and input sanitization mechanisms. Two high-impact vulnerabilities were identified and validated using proof-of-concept (PoC) exploits.
+The objective of this assessment was to evaluate authentication resilience, access control boundaries, and input sanitization mechanisms. Three distinct vulnerabilities spanning Critical, High, and Medium severity tiers were identified and validated using proof-of-concept (PoC) exploits.
 
 ---
 
@@ -20,6 +20,7 @@ The objective of this assessment was to evaluate authentication resilience, acce
 | :--- | :--- | :--- | :--- | :--- |
 | **SEC-01** | SQL Injection (Auth Bypass) | A03:2021 – Injection | `POST /rest/user/login` | **9.8 (Critical)** |
 | **SEC-02** | Insecure Direct Object Reference (IDOR) | A01:2021 – Broken Access Control | `GET /rest/basket/{id}` | **7.5 (High)** |
+| **SEC-03** | DOM-based Cross-Site Scripting (XSS) | A03:2021 – Injection | `GET /#/search?q=` | **6.1 (Medium)** |
 
 ---
 
@@ -38,9 +39,19 @@ The objective of this assessment was to evaluate authentication resilience, acce
 - **Impact:** Allowed an authenticated user to inspect the cart contents, product IDs, and quantities of arbitrary users by tampering with the numerical identifier.
 - **Remediation:** Implement server-side session checks verifying `basket.UserId === req.user.id` before returning database records.
 
+### 3. SEC-03: DOM-based Cross-Site Scripting (DOM XSS)
+- **Vulnerability Type:** Cross-Site Scripting (CWE-79)
+- **Vector:** Search input field (`/#/search?q=`)
+- **Payload:** `<iframe src="javascript:alert(`XSS_Discovered`)">`
+- **Impact:** Allowed arbitrary JavaScript execution within the client browser context, risking session hijacking and DOM manipulation.
+- **Remediation:** Enforce contextual HTML entity encoding on reflected user input and deploy strict Content Security Policy (CSP) headers.
+
 ---
 
 ## 🛠️ Tools & Environment
+- **Interception Proxy:** Burp Suite Community Edition (Repeater, Proxy History)
+- **Target Application:** OWASP Juice Shop (Node.js/Express)
+- **Methodology:** OWASP Testing Guide (OTG)
 - **Interception Proxy:** Burp Suite Community Edition (Repeater, Proxy History)
 - **Target Application:** OWASP Juice Shop (Node.js/Express)
 - **Methodology:** OWASP Testing Guide (OTG)
