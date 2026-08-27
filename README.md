@@ -5,12 +5,12 @@ A black-box/gray-box security assessment conducted against the **OWASP Juice Sho
 ---
 
 ## 📑 Full Assessment Report
-- **Download PDF Report:** [VAPT_Report_JuiceShop_LargeImages.pdf](./VAPT_Report_JuiceShop_LargeImages.pdf)
+- **Download PDF Report:** [VAPT_Master_Report_JuiceShop.pdf](./VAPT_Master_Report_JuiceShop.pdf)
 
 ---
 
 ## 🎯 Executive Summary
-The objective of this assessment was to evaluate authentication resilience, access control boundaries, and input sanitization mechanisms. Three distinct vulnerabilities spanning Critical, High, and Medium severity tiers were identified and validated using proof-of-concept (PoC) exploits.
+The objective of this assessment was to evaluate authentication resilience, access control boundaries, input sanitization mechanisms, and server asset protection. Four vulnerabilities spanning Critical, High, and Medium severity tiers were identified and validated using proof-of-concept (PoC) exploits.
 
 ---
 
@@ -21,6 +21,7 @@ The objective of this assessment was to evaluate authentication resilience, acce
 | **SEC-01** | SQL Injection (Auth Bypass) | A03:2021 – Injection | `POST /rest/user/login` | **9.8 (Critical)** |
 | **SEC-02** | Insecure Direct Object Reference (IDOR) | A01:2021 – Broken Access Control | `GET /rest/basket/{id}` | **7.5 (High)** |
 | **SEC-03** | DOM-based Cross-Site Scripting (XSS) | A03:2021 – Injection | `GET /#/search?q=` | **6.1 (Medium)** |
+| **SEC-04** | Sensitive Directory Listing Exposure | A05:2021 – Security Misconfiguration | `GET /ftp` | **5.3 (Medium)** |
 
 ---
 
@@ -46,12 +47,15 @@ The objective of this assessment was to evaluate authentication resilience, acce
 - **Impact:** Allowed arbitrary JavaScript execution within the client browser context, risking session hijacking and DOM manipulation.
 - **Remediation:** Enforce contextual HTML entity encoding on reflected user input and deploy strict Content Security Policy (CSP) headers.
 
+### 4. SEC-04: Sensitive Directory Listing & Confidential Asset Exposure
+- **Vulnerability Type:** Security Misconfiguration (CWE-548)
+- **Vector:** Unprotected directory `/ftp` discovered via `/robots.txt`
+- **Impact:** Allowed unauthenticated remote users to inspect and download internal backup files, KeePass password databases (`incident-support.kdbx`), and confidential acquisition notes (`acquisitions.md`).
+- **Remediation:** Disable directory browsing/indexing on the web server and enforce strict route authentication middleware on file storage directories.
+
 ---
 
 ## 🛠️ Tools & Environment
-- **Interception Proxy:** Burp Suite Community Edition (Repeater, Proxy History)
-- **Target Application:** OWASP Juice Shop (Node.js/Express)
-- **Methodology:** OWASP Testing Guide (OTG)
 - **Interception Proxy:** Burp Suite Community Edition (Repeater, Proxy History)
 - **Target Application:** OWASP Juice Shop (Node.js/Express)
 - **Methodology:** OWASP Testing Guide (OTG)
